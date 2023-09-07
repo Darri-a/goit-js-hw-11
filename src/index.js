@@ -6,6 +6,7 @@ const searchInput = document.querySelector('.input');
 const gallery = document.querySelector('.gallery');
 const more = document.querySelector('.load-more');
 let page;
+let allowedTotalHits;
 
 more.hidden = true;
 
