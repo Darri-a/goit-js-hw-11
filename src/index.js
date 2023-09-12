@@ -6,13 +6,16 @@ const searchInput = document.querySelector('.input');
 const gallery = document.querySelector('.gallery');
 const more = document.querySelector('.load-more');
 let page;
-let allowedTotalHits;
-
-more.hidden = true;
 
 form.addEventListener('submit', e => {
   e.preventDefault();
+  gallery.innerHTML = '';
   page = 1;
+
+  if (searchInput.value === '') {
+    return Notiflix.Notify.failure(`Wrong search input`);
+  }
+
   renderSearchImages();
 });
 
@@ -22,34 +25,35 @@ more.addEventListener('click', e => {
   more.hidden = true;
 });
 
-function renderSearchImages() {
+async function renderSearchImages() {
   allowedTotalHits = Number(localStorage.getItem('allowedTotalHits')) ?? 0;
   localStorage.setItem('allowedTotalHits', allowedTotalHits + 1);
 
-  fetchImages(searchInput.value, page)
-    .then(response => {
-      const images = response.data.hits;
-      const totalHits = response.data.totalHits;
+  const response = await fetchImages(searchInput.value, page);
+  const images = response.data.hits;
+  const totalHits = response.data.totalHits;
 
-      // console.log(response.data);
+  if (images.length > 0) {
+    Notiflix.Notify.success(`Hooray! We found ${images.length} images`);
+  }
 
-      if (allowedTotalHits > totalHits) {
-        return Notiflix.Notify.failure(
-          "We're sorry, but you've reached the end of search results."
-        );
-      }
+  if (allowedTotalHits > totalHits) {
+    return Notiflix.Notify.failure(
+      "We're sorry, but you've reached the end of search results."
+    );
+  }
 
-      if (images.length === 0) {
-        return Notiflix.Notify.failure(
-          'Sorry, there are no images matching your search query. Please try again.'
-        );
-      }
+  if (images.length === 0) {
+    return Notiflix.Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+  }
 
-      let galleryItems = '';
-      images.forEach(element => {
-        galleryItems += `
+  let galleryItems = '';
+  images.forEach(element => {
+    galleryItems += `
           <div class="photo-card">
-            <img src="${element.webformatURL}" alt="${element.tags}" loading="lazy" />
+            <img src="${element.webformatURL}" alt="${element.tags}" loading="lazy" width="200px" />
             <div class="info">
               <p class="info-item">
                 <b>Likes ${element.likes}</b>
@@ -65,14 +69,17 @@ function renderSearchImages() {
               </p>
             </div>
         </div>`;
-      });
+  });
 
-      gallery.innerHTML = galleryItems;
-      more.hidden = false;
+  gallery.innerHTML = galleryItems;
 
-      form.reset();
-    })
-    .catch(e => {
-      return Notiflix.Notify.failure('Error');
-    });
+  if (images.length < 40) {
+    Notiflix.Notify.failure(
+      'We are sorry, but you have reached the end of the search results'
+    );
+  } else {
+    more.hidden = false;
+  }
+
+  form.reset();
 }
