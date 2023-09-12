@@ -26,7 +26,8 @@ more.addEventListener('click', e => {
 });
 
 async function renderSearchImages() {
-  allowedTotalHits = Number(localStorage.getItem('allowedTotalHits')) ?? 0;
+  const allowedTotalHits =
+    Number(localStorage.getItem('allowedTotalHits')) ?? 0;
   localStorage.setItem('allowedTotalHits', allowedTotalHits + 1);
 
   const response = await fetchImages(searchInput.value, page);
