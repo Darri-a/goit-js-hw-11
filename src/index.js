@@ -77,7 +77,6 @@ async function renderSearchImages(q, page) {
     );
   } else {
     more.hidden = false;
-    console.log(12);
   }
   if (allowedTotalHits > totalHits) {
     return Notiflix.Notify.failure(
