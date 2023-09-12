@@ -509,6 +509,6 @@ let{Axios:eC,AxiosError:eE,CanceledError:eA,isCancel:eS,CancelToken:eR,VERSION:e
                 <b>Downloads ${t.downloads}</b>
               </p>
             </div>
-        </div>`}),eH.insertAdjacentHTML("beforeend",s),console.log(r),console.log(r.length),r.length<40?/*@__PURE__*/i(eP).Notify.failure("We are sorry, but you have reached the end of the search results"):(eq.hidden=!1,console.log(12)),n>a)return /*@__PURE__*/i(eP).Notify.failure("We're sorry, but you've reached the end of search results.")}eX.addEventListener("submit",e=>{e.preventDefault();let i=e_.value.trim();eH.innerHTML="",t=1,""!==i&&e$(i,t)}),eq.addEventListener("click",e=>{let i=e_.value.trim();e$(i,t+=1),eq.hidden=!0})}();//# sourceMappingURL=index.4c46a38c.js.map
+        </div>`}),eH.insertAdjacentHTML("beforeend",s),console.log(r),console.log(r.length),r.length<40?/*@__PURE__*/i(eP).Notify.failure("We are sorry, but you have reached the end of the search results"):eq.hidden=!1,n>a)return /*@__PURE__*/i(eP).Notify.failure("We're sorry, but you've reached the end of search results.")}eX.addEventListener("submit",e=>{e.preventDefault();let i=e_.value.trim();eH.innerHTML="",t=1,""!==i&&e$(i,t)}),eq.addEventListener("click",e=>{let i=e_.value.trim();e$(i,t+=1),eq.hidden=!0})}();//# sourceMappingURL=index.a502cc3f.js.map
 
-//# sourceMappingURL=index.4c46a38c.js.map
+//# sourceMappingURL=index.a502cc3f.js.map
