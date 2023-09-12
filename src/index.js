@@ -9,39 +9,34 @@ let page;
 
 form.addEventListener('submit', e => {
   e.preventDefault();
+  const q = searchInput.value.trim();
   gallery.innerHTML = '';
   page = 1;
-
-  if (searchInput.value === '') {
-    return Notiflix.Notify.failure(`Wrong search input`);
+  if (q === '') {
+    return;
   }
 
-  renderSearchImages();
+  renderSearchImages(q, page);
 });
 
 more.addEventListener('click', e => {
+  const q = searchInput.value.trim();
   page = page + 1;
-  renderSearchImages(page);
+  renderSearchImages(q, page);
   more.hidden = true;
 });
 
-async function renderSearchImages() {
+async function renderSearchImages(q, page) {
   const allowedTotalHits =
     Number(localStorage.getItem('allowedTotalHits')) ?? 0;
   localStorage.setItem('allowedTotalHits', allowedTotalHits + 1);
 
-  const response = await fetchImages(searchInput.value, page);
+  const response = await fetchImages(q, page);
   const images = response.data.hits;
   const totalHits = response.data.totalHits;
 
   if (images.length > 0) {
-    Notiflix.Notify.success(`Hooray! We found ${images.length} images`);
-  }
-
-  if (allowedTotalHits > totalHits) {
-    return Notiflix.Notify.failure(
-      "We're sorry, but you've reached the end of search results."
-    );
+    Notiflix.Notify.success(`Hooray! We found ${totalHits} images`);
   }
 
   if (images.length === 0) {
@@ -72,15 +67,21 @@ async function renderSearchImages() {
         </div>`;
   });
 
-  gallery.innerHTML = galleryItems;
+  gallery.insertAdjacentHTML('beforeend', galleryItems);
 
+  console.log(images);
+  console.log(images.length);
   if (images.length < 40) {
     Notiflix.Notify.failure(
       'We are sorry, but you have reached the end of the search results'
     );
   } else {
     more.hidden = false;
+    console.log(12);
   }
-
-  form.reset();
+  if (allowedTotalHits > totalHits) {
+    return Notiflix.Notify.failure(
+      "We're sorry, but you've reached the end of search results."
+    );
+  }
 }
