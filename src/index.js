@@ -6,6 +6,7 @@ const searchInput = document.querySelector('.input');
 const gallery = document.querySelector('.gallery');
 const more = document.querySelector('.load-more');
 let page;
+let onSubmit = true;
 
 form.addEventListener('submit', e => {
   e.preventDefault();
@@ -13,10 +14,12 @@ form.addEventListener('submit', e => {
   gallery.innerHTML = '';
   page = 1;
   if (q === '') {
+    Notiflix.Notify.failure(`PLease enter search query`);
     return;
   }
 
   renderSearchImages(q, page);
+  onSubmit = true;
 });
 
 more.addEventListener('click', e => {
@@ -24,22 +27,21 @@ more.addEventListener('click', e => {
   page = page + 1;
   renderSearchImages(q, page);
   more.hidden = true;
+
+  onSubmit = false;
 });
 
 async function renderSearchImages(q, page) {
-  const allowedTotalHits =
-    Number(localStorage.getItem('allowedTotalHits')) ?? 0;
-  localStorage.setItem('allowedTotalHits', allowedTotalHits + 1);
-
   const response = await fetchImages(q, page);
   const images = response.data.hits;
   const totalHits = response.data.totalHits;
 
-  if (images.length > 0) {
+  if (images.length > 0 && onSubmit) {
     Notiflix.Notify.success(`Hooray! We found ${totalHits} images`);
   }
 
   if (images.length === 0) {
+    more.hidden = true;
     return Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
@@ -69,18 +71,19 @@ async function renderSearchImages(q, page) {
 
   gallery.insertAdjacentHTML('beforeend', galleryItems);
 
-  console.log(images);
-  console.log(images.length);
-  if (images.length < 40) {
+  const lastPage = Math.ceil(totalHits / 40);
+
+  if (totalHits < 40) {
+    return (more.hidden = true);
+  }
+
+  more.hidden = false;
+
+  if (lastPage === page) {
+    more.hidden = true;
     Notiflix.Notify.failure(
       'We are sorry, but you have reached the end of the search results'
     );
-  } else {
-    more.hidden = false;
-  }
-  if (allowedTotalHits > totalHits) {
-    return Notiflix.Notify.failure(
-      "We're sorry, but you've reached the end of search results."
-    );
+    return;
   }
 }
